@@ -12,3 +12,4 @@ print("Your band name could be " + cityname + " " + petname)
 
 #5. Make sure the input cursor shows on a new line, see the example at:
 #   https://replit.com/@appbrewery/band-name-generator-end
+
