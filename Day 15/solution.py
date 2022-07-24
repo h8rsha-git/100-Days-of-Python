@@ -1,3 +1,6 @@
+state = 'ON'
+profit = 0
+
 MENU = {
     "espresso": {
         "ingredients": {
@@ -33,13 +36,13 @@ resources = {
 
 def print_report():
     """Prints the current quantities of the resources"""
-    print(f"Water: {resources['water']}")
-    print(f"Milk: {resources['milk']}")
-    print(f"Coffee: {resources['coffee']}")
-    print(f"Money: ${machine_total}")
+    print(f"Water: {resources['water']}ml")
+    print(f"Milk: {resources['milk']}ml")
+    print(f"Coffee: {resources['coffee']}g")
+    print(f"Money: ${profit}")
 
 
-def calculate_total():
+def process_coins():
     print("Please insert coins.")
     total = 0
     quarters = int(input("How many quarters ?"))
@@ -53,7 +56,7 @@ def calculate_total():
     return total
 
 
-def check_resources(drink):
+def is_resource_sufficient(drink):
     for resource in MENU[drink]['ingredients']:
         if MENU[drink]['ingredients'][resource] > resources[resource]:
             print(f"Sorry there is not enough {resource}.")
@@ -61,39 +64,42 @@ def check_resources(drink):
     return True
 
 
-def update_resources(drink):
+def make_coffee(drink):
     for resource in MENU[drink]['ingredients']:
         resources[resource] -= MENU[drink]['ingredients'][resource]
 
 
-def process_coins(drink):
-    user_total = calculate_total()
+def is_transaction_successful(drink):
+    user_total = process_coins()
     coffee_cost = MENU[drink]['cost']
     if coffee_cost <= user_total:
-        update_resources(user_input)
-        change = user_total - coffee_cost
+        change = round(user_total - coffee_cost, 2)
         if change > 0:
-            print(f"Here is ${round(change, 2)} dollars in change.")
-        print(f"Here is your {user_input}. Enjoy!")
+            print(f"Here is ${change} dollars in change.")
+        global profit
+        profit += coffee_cost
+        return True
     else:
         print("Sorry that's not enough money. Money refunded.")
+        return False
 
 
-state = 'ON'
-machine_total = 0
+
 # OFF CASE
 
 while state == 'ON':
-    user_input = input("What would you like? (espresso/latte/cappuccino):")
-    if user_input.lower() == 'report':
+    choice = input("What would you like? (espresso/latte/cappuccino):")
+    if choice.lower() == 'report':
         print_report()
-    elif user_input.lower() == 'off':
+    elif choice.lower() == 'off':
         state = 'OFF'
     else:
         # process coins
-        if check_resources(user_input):
-            process_coins(user_input)
-            machine_total += MENU[user_input]['cost']
+        if is_resource_sufficient(choice):
+            payment = process_coins()
+            if is_transaction_successful(choice):
+                make_coffee(choice)
+
 
 
 
