@@ -34,6 +34,6 @@ print(password)
 
 l = list(password)
 random.shuffle(l)
-random_password = ''.join(l)
+random_password = ''.join(l) # joining list of elements with the specified character
 
 print(random_password)
